@@ -2,10 +2,6 @@
 
 use BRI\CardlessCashWithdrawal\CardlessReversal;
 
-require __DIR__ . '/../vendor/autoload.php';
-
-Dotenv\Dotenv::createUnsafeImmutable(__DIR__ . '/..' . '')->load();
-
 require __DIR__ . '/../../briapi-sdk/autoload.php';
 
 $secretKey = '';

@@ -27,7 +27,6 @@ module:
 
 ```bash
 1. run command `cd briapi-template-cardless-cash-withdrawal-php` to change directory
-2. run composer install to install all dependencies
 ```
 
 ### Auth Token
