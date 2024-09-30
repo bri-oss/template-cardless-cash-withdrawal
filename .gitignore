@@ -6,10 +6,10 @@
 # Node artifact files
 node_modules/
 dist/
-# vendor/
+vendor/
 
 #environment variables
-# .env
+.env
 
 # Compiled Java class files
 *.class
