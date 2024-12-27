@@ -5,12 +5,12 @@ use BRI\CardlessCashWithdrawal\CardlessWithdrawal;
 
 require __DIR__ . '/../../briapi-sdk/autoload.php';
 
-$clientId = 'your_client_id';
+$clientId = '';
 
 // url path values
 $baseUrl = 'https://api.bridex.qore.page/mock'; //base url
-$providerId = 'client_credentials'; // customer key
-$secretKey = 'S7zgRMA0rUMf4ddkagpreoECgYEAxRkh'; // customer secret
+$providerId = ''; // customer key
+$secretKey = ''; // customer secret
 
 $getToken = (new AuthToken())->authToken(
   $baseUrl,
@@ -18,7 +18,8 @@ $getToken = (new AuthToken())->authToken(
   $secretKey
 );
 
-$accessToken = json_decode($getToken, true)['access_token'];
+$data = json_decode($getToken, true);
+$accessToken = $data['access_token'] ?? null;
 
 $cardlessWithDrawal = new CardlessWithdrawal();
 
