@@ -5,29 +5,42 @@ use BRI\CardlessCashWithdrawal\CardlessReversal;
 
 require __DIR__ . '/../../briapi-sdk/autoload.php';
 
-$clientId = '';
+try {
+  $clientId = filter_var('', FILTER_SANITIZE_STRING);
 
-// url path values
-$baseUrl = 'https://api.bridex.qore.page/mock'; //base url
-$providerId = ''; // customer key
-$secretKey = ''; // customer secret
+  // url path values
+  $baseUrl = 'https://api.bridex.qore.page/mock'; //base url
+  $providerId = filter_var('', FILTER_SANITIZE_STRING); // customer key
+  $secretKey = filter_var('', FILTER_SANITIZE_STRING); // customer secret
 
-$getToken = (new AuthToken())->authToken(
-  $baseUrl,
-  $providerId,
-  $secretKey
-);
+  if (empty($clientId) || empty($providerId) || empty($secretKey)) {
+    throw new Exception('Invalid input parameter variables');
+  }
 
-$data = json_decode($getToken, true);
-$accessToken = $data['access_token'] ?? null;
+  $getToken = (new AuthToken())->authToken(
+    $baseUrl,
+    $providerId,
+    $secretKey
+  );
 
-$cardlessReversal = new CardlessReversal();
+  $data = json_decode($getToken, true);
+  $accessToken = $data['access_token'] ?? null;
 
-$response = $cardlessReversal->cardlessReversal(
-  $baseUrl,
-  $clientId,
-  $secretKey,
-  $accessToken
-);
+  if (!$accessToken) {
+    throw new Exception('Failed to retrieve access token.');
+  }
 
-echo $response;
+  $cardlessReversal = new CardlessReversal();
+
+  $response = $cardlessReversal->cardlessReversal(
+    $baseUrl,
+    $clientId,
+    $secretKey,
+    $accessToken
+  );
+
+  echo $response;
+} catch (Exception $e) {
+  echo 'Error: ' . $e->getMessage();
+  exit(1);
+}

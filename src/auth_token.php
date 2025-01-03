@@ -6,16 +6,26 @@ use BRI\CardlessCashWithdrawal\AuthToken;
 
 require __DIR__ . '/../../briapi-sdk/autoload.php';
 
-$providerId = ''; // customer key
-$secretKey = ''; // customer secret
 
-// url path values
-$baseUrl = 'https://api.bridex.qore.page/mock'; //base url
+try {
+  $providerId = filter_var('', FILTER_SANITIZE_STRING); // customer key
+  $secretKey = filter_var('', FILTER_SANITIZE_STRING); // customer secret
 
-$response = (new AuthToken())->authToken(
-  $baseUrl,
-  $providerId,
-  $secretKey
-);
+  if (empty($providerId) || empty($secretKey)) {
+    throw new Exception('Invalid input parameter variables');
+  }
 
-echo $response;
+  // url path values
+  $baseUrl = 'https://api.bridex.qore.page/mock'; //base url
+
+  $response = (new AuthToken())->authToken(
+    $baseUrl,
+    $providerId,
+    $secretKey
+  );
+
+  echo $response;
+} catch (Exception $e) {
+  echo 'Error: ' . $e->getMessage();
+  exit(1);
+}
