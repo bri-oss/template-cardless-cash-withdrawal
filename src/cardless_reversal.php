@@ -1,9 +1,9 @@
 <?php
 
-use BRI\CardlessCashWithdrawal\AuthToken;
-use BRI\CardlessCashWithdrawal\CardlessReversal;
+require 'utils.php';
 
-require __DIR__ . '/../../briapi-sdk/autoload.php';
+// Enforce HTTPS with HSTS
+header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
 
 try {
   $clientId = filter_var('', FILTER_SANITIZE_STRING);
@@ -13,34 +13,27 @@ try {
   $providerId = filter_var('', FILTER_SANITIZE_STRING); // customer key
   $secretKey = filter_var('', FILTER_SANITIZE_STRING); // customer secret
 
-  if (empty($clientId) || empty($providerId) || empty($secretKey)) {
-    throw new Exception('Invalid input parameter variables');
-  }
+  $validateInput = sanitizeInput([
+    'clientId' => $clientId,
+    'providerId' => $providerId,
+    'secretKey' => $secretKey
+  ]);
 
-  $getToken = (new AuthToken())->authToken(
+  $accessToken = getAccessToken($providerId, $secretKey, $baseUrl);
+
+  $response = fetchCardlessReversal(
     $baseUrl,
-    $providerId,
-    $secretKey
-  );
-
-  $data = json_decode($getToken, true);
-  $accessToken = $data['access_token'] ?? null;
-
-  if (!$accessToken) {
-    throw new Exception('Failed to retrieve access token.');
-  }
-
-  $cardlessReversal = new CardlessReversal();
-
-  $response = $cardlessReversal->cardlessReversal(
-    $baseUrl,
-    $clientId,
-    $secretKey,
+    $validateInput['clientId'],
+    $validateInput['secretKey'],
     $accessToken
   );
 
   echo $response;
-} catch (Exception $e) {
-  echo 'Error: ' . $e->getMessage();
+
+} catch (InvalidArgumentException $e) {
+  echo 'Invalid argument: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
+} catch (RuntimeException $e) {
+  error_log($e->getMessage());
+
   exit(1);
 }
