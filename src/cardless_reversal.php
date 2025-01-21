@@ -8,12 +8,12 @@ $csp = "default-src 'self'; script-src 'self'; object-src 'none';";
 header("Content-Security-Policy: $csp");
 
 try {
-  $clientId = filter_var('YOWoKgXf5KcATtetyq7NbfxOz6FR65Un', FILTER_SANITIZE_STRING);
+  $clientId = filter_var('', FILTER_SANITIZE_STRING);
 
   // url path values
   $baseUrl = 'https://api.bridex.qore.page/mock'; //base url
-  $providerId = filter_var('client_credentials', FILTER_SANITIZE_STRING); // customer key
-  $secretKey = filter_var('super_secret', FILTER_SANITIZE_STRING); // customer secret
+  $providerId = filter_var('', FILTER_SANITIZE_STRING); // customer key
+  $secretKey = filter_var('', FILTER_SANITIZE_STRING); // customer secret
 
   $validateInput = sanitizeInput([
     'clientId' => $clientId,
