@@ -4,14 +4,16 @@ require 'utils.php';
 
 // Enforce HTTPS with HSTS
 header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
+$csp = "default-src 'self'; script-src 'self'; object-src 'none';";
+header("Content-Security-Policy: $csp");
 
 try {
-  $clientId = filter_var('', FILTER_SANITIZE_STRING);
+  $clientId = filter_var('YOWoKgXf5KcATtetyq7NbfxOz6FR65Un', FILTER_SANITIZE_STRING);
 
   // url path values
   $baseUrl = 'https://api.bridex.qore.page/mock'; //base url
-  $providerId = filter_var('', FILTER_SANITIZE_STRING); // customer key
-  $secretKey = filter_var('', FILTER_SANITIZE_STRING); // customer secret
+  $providerId = filter_var('client_credentials', FILTER_SANITIZE_STRING); // customer key
+  $secretKey = filter_var('super_secret', FILTER_SANITIZE_STRING); // customer secret
 
   $validateInput = sanitizeInput([
     'clientId' => $clientId,
@@ -19,7 +21,7 @@ try {
     'secretKey' => $secretKey
   ]);
 
-  $accessToken = getAccessToken($providerId, $secretKey, $baseUrl);
+  $accessToken = getAccessToken($validateInput['providerId'], $validateInput['secretKey'], $baseUrl);
 
   $response = fetchCardlessReversal(
     $baseUrl,
@@ -28,12 +30,20 @@ try {
     $accessToken
   );
 
-  echo $response;
+  // Encode output to prevent XSS
+  header('Content-Type: application/json');
+  echo json_encode(['data' => htmlspecialchars($response, ENT_QUOTES, 'UTF-8')], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
 } catch (InvalidArgumentException $e) {
-  echo 'Invalid argument: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
+  error_log('Invalid argument: ' . $e->getMessage());
+
+  http_response_code(400);
+  echo json_encode(['error' => 'An error occurred. Please check your input.']);
 } catch (RuntimeException $e) {
   error_log($e->getMessage());
+
+  http_response_code(500);
+  echo json_encode(['error' => 'An unexpected error occurred. Please contact support.']);
 
   exit(1);
 }
