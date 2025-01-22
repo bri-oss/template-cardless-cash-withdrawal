@@ -3,6 +3,8 @@
 use BRI\CardlessCashWithdrawal\AuthToken;
 use BRI\CardlessCashWithdrawal\CardlessReversal;
 use BRI\CardlessCashWithdrawal\CardlessWithdrawal;
+use BRI\Util\ExecuteCurlRequest;
+use BRI\Util\PrepareRequest;
 
 require __DIR__ . '/../../briapi-sdk/autoload.php';
 
@@ -42,7 +44,13 @@ function fetchCardlessReversal(
   string $secretKey,
   string $accessToken
   ): string {
-  $cardlessReversal = new CardlessReversal();
+  $executeCurlRequest = new ExecuteCurlRequest();
+  $prepareRequest = new PrepareRequest();
+
+  $cardlessReversal = new CardlessReversal(
+    $executeCurlRequest,
+    $prepareRequest
+  );
 
   $response = $cardlessReversal->cardlessReversal(
     $baseUrl,
@@ -64,7 +72,13 @@ function fetchCardlessWithDrawal(
   string $secretKey,
   string $accessToken
 ) {
-  $cardlessWithDrawal = new CardlessWithdrawal();
+  $executeCurlRequest = new ExecuteCurlRequest();
+  $prepareRequest = new PrepareRequest();
+
+  $cardlessWithDrawal = new CardlessWithdrawal(
+    $executeCurlRequest,
+    $prepareRequest
+  );
 
   $response = $cardlessWithDrawal->cardlessWithdrawal(
     $baseUrl,
