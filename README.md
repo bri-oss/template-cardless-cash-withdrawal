@@ -26,7 +26,7 @@ module:
 ### How to Setup Project
 
 ```bash
-1. run command `cd briapi-template-cardless-cash-withdrawal-php` to change directory
+1. run command `cd template-cardless-cash-withdrawal` to change directory
 ```
 
 ### Auth Token
